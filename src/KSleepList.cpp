@@ -10,12 +10,13 @@ void KSleepList::put(KThread* thread, time_t time){
 
     for(sleepThreadQueue.setFirst(); sleepThreadQueue.isCur(); sleepThreadQueue.next()) {
         sleepInfo* curInfo = sleepThreadQueue.peekCur();
-        if (time <= curInfo->time) {
-            curInfo->time -= time;
+        if (newInfo->time <= curInfo->time) { //<= je bolje od < zbog umetanja
+            curInfo->time -= newInfo->time;
             sleepThreadQueue.addBefore(newInfo);
             return;
         }
-        time -= curInfo->time;
+        newInfo->time -= curInfo->time;
+
     }
     sleepThreadQueue.addLast(newInfo);
 }

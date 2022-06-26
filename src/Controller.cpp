@@ -143,7 +143,6 @@ void Controller::kputc(){
 
 void Controller::idle(void* arg){
     while(1){
-        Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
         KThread::yield();
     }
 }
@@ -179,10 +178,22 @@ void Controller::exitMain(){
     while(!transferOutThread->isBlocked()){//cekanje da se zavrsi transfer ukoliko ga ima
         KThread::yield();
     }
+
     mainThread->setFinished(true);
     delete mainThread;
+    MemoryAllocator::instance().kbusy_init(); //mora da se uradi jer kada se transferOut blokirao odradio je alokaciju koja nema svoju dealokaciju
 }
 void Controller::exitTransferOut(){
     transferOutThread->setFinished(true);
     delete transferOutThread;
+}
+
+void Controller::setUserMode(){
+    __asm__ volatile("mv a0, %[code]" : : [code] "r" (cset_usermode));
+    __asm__ volatile("ecall");
+}
+
+void Controller::clearUserMode(){
+    __asm__ volatile("mv a0, %[code]" : : [code] "r" (cclear_usermode));
+    __asm__ volatile("ecall");
 }

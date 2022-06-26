@@ -10,14 +10,16 @@ int main(){
     Controller::createIdle();
     Controller::createMain();
     Controller::createTransferOut();
-//    thread_create(&transferOutThread, KConsole::transferOut, nullptr);
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
+    Controller::setUserMode();
 
     userMain();
 
+    Controller::clearUserMode();
     Controller::exitTransferOut();
     Controller::exitIdle();
     Controller::exitMain();
     Riscv::mc_sstatus(Riscv::SSTATUS_SIE);
+
     return 0;
 }

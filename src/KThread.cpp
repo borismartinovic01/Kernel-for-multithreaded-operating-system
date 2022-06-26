@@ -1,6 +1,3 @@
-//
-// Created by os on 5/16/22.
-//
 
 #include "../h/KThread.hpp"
 #include "../h/Riscv.hpp"
@@ -25,8 +22,7 @@ void KThread::yield()
 void KThread::dispatch()
 {
     KThread *old = running;
-
-    if (!old->isFinished() && !old->isBlocked() && !old->isSleep() && !(old->body == nullptr && old->arg==nullptr)) {
+    if (!old->isFinished() && !old->isBlocked() && !old->isSleep() && !(old->body == nullptr && old->arg==nullptr)){
         KScheduler::put(old);
     }
     running = KScheduler::get();
@@ -39,6 +35,8 @@ void KThread::dispatch()
             running = idleThread;
         }
     }
+    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
+    Riscv::ms_sstatus(Riscv::SSTATUS_SPP);
     KThread::contextSwitch(&old->context, &running->context);
 }
 
@@ -67,7 +65,7 @@ void KThread::start(){
     KScheduler::put(this);
 }
 
-int KThread::exit(){ // test
+int KThread::exit(){
     KThread::running->setFinished(true);
     activeThreads--;
     delete KThread::running;

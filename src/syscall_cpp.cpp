@@ -57,6 +57,18 @@ void Console::putc(char c){
     return ::putc(c);
 }
 
+PeriodicThread::PeriodicThread(time_t period)
+    :Thread(periodicWrapper, new periodicInfo(this, period)){}
+
+
+void PeriodicThread::periodicWrapper(void *data) {
+    periodicInfo* info = (periodicInfo*)data;
+    while(1){
+        info->thread->periodicActivation();
+        sleep(info->period);
+    }
+}
+
 //void *operator new[](size_t n)
 //{
 //    return mem_alloc(n);

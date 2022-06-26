@@ -10,7 +10,11 @@ void Riscv::popSppSpie()
 void Riscv::handleSupervisorTrap(){
     uint64 scauseVal = Riscv::r_scause();
     if(scauseVal == consoleTrap){
+        uint64 sepc = r_sepc();
+        uint64 sstatus = r_sstatus();
         handle_console();
+        w_sstatus(sstatus);
+        w_sepc(sepc);
     }
     else if(scauseVal == timerTrap){
         KThread::timeSliceCounter++;
@@ -27,10 +31,24 @@ void Riscv::handleSupervisorTrap(){
         mc_sip(SIP_SSIP);
     }
     else if(scauseVal == userTrap || scauseVal == systemTrap){
+        uint64 code;
+        __asm__ volatile("mv %[val], a0" : [val] "=r" (code));
+        if(code == cset_usermode){
+            uint64 sepc = r_sepc() + 4;
+            mc_sstatus(Riscv::SSTATUS_SPP);
+            w_sepc(sepc);
+            return;
+        }
+        if(code == cclear_usermode){
+            uint64 sepc = r_sepc() + 4;
+            ms_sstatus(Riscv::SSTATUS_SPP);
+            w_sepc(sepc);
+            return;
+        }
         uint64 sepc = r_sepc() + 4; //prelazak na sledecu instrukciju posle ecall
         uint64 sstatus = r_sstatus();
         syscall_handler();
-        __asm__ volatile("sd a0, 0xa0(sp)"); //prosledjivanje povratne vrednosti na stek 50 + 50 heksa, 50 je pomeraj iz prekidne rutine +50 jer se sp promenio kada se pozvala handleSupervisorTrap()
+        __asm__ volatile("sd a0, 0xc0(sp)"); //prosledjivanje povratne vrednosti na stek 70 + 50 heksa, 50 je pomeraj iz prekidne rutine +70 jer se sp promenio kada se pozvala handleSupervisorTrap()
         w_sstatus(sstatus);
         w_sepc(sepc);
     }

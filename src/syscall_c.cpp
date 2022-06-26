@@ -1,5 +1,4 @@
 #include "../h/syscall_c.hpp"
-#include "../lib/hw.h"
 #include "../h/ABI.hpp"
 
 void* mem_alloc(size_t size){
