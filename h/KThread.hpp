@@ -12,7 +12,9 @@ extern KThread* transferOutThread;
 class KThread {
 public:
 
-    ~KThread() { MemoryAllocator::instance().kmem_free(stack); }
+    ~KThread() {
+        if(this != mainThread) MemoryAllocator::instance().kmem_free(stack);
+    }
 
     bool isFinished() const { return finished; }
 

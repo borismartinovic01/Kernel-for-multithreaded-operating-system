@@ -16,6 +16,8 @@ public:
     static void exitIdle();
     static void exitMain();
     static void exitTransferOut();
+    static void setUserMode();
+    static void clearUserMode();
 private:
     friend class Riscv;
     static void kmem_alloc();

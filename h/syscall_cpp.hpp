@@ -35,12 +35,18 @@ private:
         sem_t myHandle;
 };
 
-//todo
-//class PeriodicThread : public Thread {
-//protected:
-//        PeriodicThread (time_t period);
-//        virtual void periodicActivation () {}
-//};
+class PeriodicThread : public Thread {
+protected:
+        PeriodicThread (time_t period);
+        virtual void periodicActivation () {}
+private:
+        struct periodicInfo{
+            PeriodicThread* thread;
+            time_t period;
+            periodicInfo(PeriodicThread* thread, time_t period) : thread(thread), period(period) {}
+        };
+        static void periodicWrapper(void* data);
+};
 
 class Console {
 public:

@@ -14,7 +14,6 @@ private:
 
         Elem(T *data, Elem *next) : data(data), next(next) {}
 
-        //ovo moze da bude popunjeno tako da pokrij to u pozivima
         void* operator new(size_t size) {
             size_t numOfBlocks = size/MEM_BLOCK_SIZE;
             if(size>numOfBlocks*MEM_BLOCK_SIZE) numOfBlocks++;
@@ -80,6 +79,7 @@ public:
         Elem *elem = new Elem(cur->data, cur->next);
         cur->data = data;
         cur->next = elem;
+        if(cur == tail) tail = elem; // i po potrebi se azurira tail
     }
 
     T *removeFirst()

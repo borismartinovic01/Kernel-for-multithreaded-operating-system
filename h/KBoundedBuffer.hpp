@@ -9,7 +9,7 @@ public:
     KBoundedBuffer();
     void append(char c);
     char take();
-    bool isBlckd() const { return spaceAvailable.value() == 0 && mutex.value() == 0;}
+    bool isBlckd() const { return spaceAvailable.value() == 0 || mutex.value() == 0;}
 private:
     static const int N = 256;
     KSemaphore mutex;

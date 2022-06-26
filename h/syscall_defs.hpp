@@ -16,5 +16,6 @@ const uint64 csem_signal = 0x24;
 const uint64 ctime_sleep = 0x31;
 const uint64 cgetc = 0x41;
 const uint64 cputc = 0x42;
-
+const uint64 cset_usermode = 0x43;
+const uint64 cclear_usermode = 0x44;
 #endif

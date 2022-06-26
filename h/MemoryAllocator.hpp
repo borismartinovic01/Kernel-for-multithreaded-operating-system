@@ -20,5 +20,6 @@ private:
    BusyNode* busyListHeader;
    MemoryAllocator();
    void kbusy_init();
+   friend class Controller;
 };
 #endif
